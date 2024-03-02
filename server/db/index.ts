@@ -58,9 +58,9 @@ export default async (config, options) => {
     const db = await mongoose.connect(options.connectionString, {
         useUnifiedTopology: true,
         useNewUrlParser: true,
-        useCreateIndex: true,
+        /*useCreateIndex: true,*//*Depricated*/
         keepAlive: true,
-        poolSize: options.poolSize
+        /*poolSize: options.poolSize*//*Depricated*/
     });
 
     if (options.syncIndexes) {

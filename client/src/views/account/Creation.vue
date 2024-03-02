@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import VueRecaptcha from 'vue-recaptcha'
+//import VueRecaptcha from 'vue-recaptcha'
 import LoadingSpinnerVue from '../components/LoadingSpinner'
 import ViewContainer from '../components/ViewContainer'
 import router from '../../router'
@@ -116,7 +116,7 @@ export default {
     'view-container': ViewContainer,
     'view-title': ViewTitle,
     'form-error-list': FormErrorList,
-    'recaptcha': VueRecaptcha,
+    //'recaptcha': VueRecaptcha,
     'parallax': ParallaxVue
   },
   data () {

@@ -55,7 +55,7 @@ const schema = new Schema({
 			readyToQuit: { type: Types.String, required: false, enum: ['disabled', 'enabled'], default: 'enabled' }
         },
         galaxy: {
-			galaxyType: { type: Types.String, required: true, enum: ['circular', 'spiral', 'doughnut','circular-balanced', 'irregular', 'custom'], default: 'circular' },
+			galaxyType: { type: Types.String, required: true, enum: ['polar','circular', 'spiral', 'doughnut','circular-balanced', 'irregular', 'custom'], default: 'polar' },
 			starsPerPlayer: { type: Types.Number, required: true, min: 3, max: 50, default: 20 },
 			productionTicks: { type: Types.Number, required: true, min: 6, max: 36, default: 24 }
         },

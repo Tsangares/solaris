@@ -620,6 +620,7 @@ export default {
         'random': 'Random',
         'weightedCenter': 'Weighted (Center)',
         'irregular': 'Irregular',
+        'polar': 'Polar',
         'circular': 'Circular',
         'spiral': 'Spiral',
         'doughnut': 'Doughnut',

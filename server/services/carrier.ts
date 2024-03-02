@@ -80,7 +80,7 @@ export default class CarrierService extends EventEmitter {
         let name = this.generateCarrierName(star, carriers);
 
         let carrier: Carrier = {
-            _id: mongoose.Types.ObjectId(),
+            _id: new mongoose.Types.ObjectId(),
             ownedByPlayerId: star.ownedByPlayerId,
             ships: ships,
             orbiting: star._id,

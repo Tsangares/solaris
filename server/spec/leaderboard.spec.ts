@@ -76,18 +76,18 @@ describe('Leaderboard - Last man standing', () => {
             galaxy: {
                 players: [
                     {
-                        _id: mongoose.Types.ObjectId(),
-                        userId: mongoose.Types.ObjectId(),
+                        _id: new mongoose.Types.ObjectId(),
+                        userId: new mongoose.Types.ObjectId(),
                         defeated: false
                     },
                     {
-                        _id: mongoose.Types.ObjectId(),
-                        userId: mongoose.Types.ObjectId(),
+                        _id: new mongoose.Types.ObjectId(),
+                        userId: new mongoose.Types.ObjectId(),
                         defeated: false
                     },
                     {
-                        _id: mongoose.Types.ObjectId(),
-                        userId: mongoose.Types.ObjectId(),
+                        _id: new mongoose.Types.ObjectId(),
+                        userId: new mongoose.Types.ObjectId(),
                         defeated: false
                     }
                 ]

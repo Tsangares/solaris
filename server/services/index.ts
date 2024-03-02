@@ -71,6 +71,7 @@ import CircularBalancedMapService from './maps/circularBalanced';
 import SpiralMapService from './maps/spiral';
 import DoughnutMapService from './maps/doughnut';
 import IrregularMapService from './maps/irregular';
+import PolarMapService from './maps/polar_maps';
 import CustomMapService from './maps/custom';
 import DiplomacyUpkeepService from './diplomacyUpkeep';
 import PlayerCreditsService from './playerCredits';
@@ -156,8 +157,9 @@ export default (config, io): DependencyContainer => {
     const spiralMapService = new SpiralMapService(randomService, starService, starDistanceService, distanceService, resourceService, gameTypeService);
     const doughnutMapService = new DoughnutMapService(randomService, starService, starDistanceService, distanceService, resourceService, gameTypeService);
     const irregularMapService = new IrregularMapService(randomService, starService, starDistanceService, distanceService, resourceService, gameTypeService);
+    const polarMapService = new PolarMapService(randomService, starService, starDistanceService, distanceService, resourceService, gameTypeService);
     const customMapService = new CustomMapService();
-    const mapService = new MapService(randomService, starService, starDistanceService, nameService, circularMapService, spiralMapService, doughnutMapService, circularBalancedMapService, irregularMapService, gameTypeService, customMapService);
+    const mapService = new MapService(randomService, starService, starDistanceService, nameService, circularMapService, spiralMapService, doughnutMapService, circularBalancedMapService, irregularMapService, polarMapService, gameTypeService, customMapService);
     const playerReadyService = new PlayerReadyService(gameRepository, gameTypeService);
     const playerService = new PlayerService(gameRepository, randomService, mapService, starService, carrierService, starDistanceService, technologyService, specialistService, gameTypeService, playerReadyService);
     const spectatorService = new SpectatorService(gameRepository, playerService, userService);

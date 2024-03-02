@@ -1,0 +1,29 @@
+html,body{
+    margin: 0;
+    width: 100%;
+}
+#graphics{
+    background-color: #000033;
+    width: 100vmax;
+    height: auto;
+    min-height: 100vmin;
+}
+canvas {
+    width: 100%;
+}
+#animation-canvas {
+    background-color: transparent;
+    pointer-events:none; 
+}
+
+#sim {
+    padding: 1rem;
+    /* Make pretty Text */
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
+    color: darkcyan;
+}
+#sim > span {
+    margin: 0.5rem;
+    display: block;
+}

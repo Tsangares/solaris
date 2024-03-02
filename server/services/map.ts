@@ -7,6 +7,7 @@ import CircularBalancedMapService from "./maps/circularBalanced";
 import CustomMapService from "./maps/custom";
 import DoughnutMapService from "./maps/doughnut";
 import IrregularMapService from "./maps/irregular";
+import PolarMapService from "./maps/polar_maps";
 import SpiralMapService from "./maps/spiral";
 import NameService from "./name";
 import RandomService from "./random";
@@ -24,6 +25,7 @@ export default class MapService {
     doughnutMapService: DoughnutMapService;
     circularBalancedMapService: CircularBalancedMapService;
     irregularMapService: IrregularMapService;
+    polarMapService: PolarMapService;
     gameTypeService: GameTypeService;
     customMapService: CustomMapService;
 
@@ -37,6 +39,7 @@ export default class MapService {
         doughnutMapService: DoughnutMapService,
         circularBalancedMapService: CircularBalancedMapService,
         irregularMapService: IrregularMapService,
+        polarMapService: PolarMapService,
         gameTypeService: GameTypeService,
         customMapService: CustomMapService
     ) {
@@ -49,6 +52,7 @@ export default class MapService {
         this.doughnutMapService = doughnutMapService;
         this.circularBalancedMapService = circularBalancedMapService;
         this.irregularMapService = irregularMapService;
+        this.polarMapService = polarMapService;
         this.gameTypeService = gameTypeService;
         this.customMapService = customMapService;
     }
@@ -63,8 +67,10 @@ export default class MapService {
 
         // Generate all of the locations for stars.
         let starLocations: any[] = [];
-
         switch (game.settings.galaxy.galaxyType) {
+            case 'polar':
+                starLocations = this.polarMapService.generateLocations(game, starCount, game.settings.specialGalaxy.resourceDistribution, playerLimit);
+                break;
             case 'circular':
                 starLocations = this.circularMapService.generateLocations(game, starCount, game.settings.specialGalaxy.resourceDistribution);
                 break;

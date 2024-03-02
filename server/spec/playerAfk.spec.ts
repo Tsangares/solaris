@@ -57,7 +57,7 @@ describe('Player AFK Service', () => {
         player = {
             defeated: false,
             afk: false,
-            userId: mongoose.Types.ObjectId(),
+            userId: new mongoose.Types.ObjectId(),
             lastSeen: null
         } as Player;
 
@@ -67,7 +67,7 @@ describe('Player AFK Service', () => {
     describe('Is AI Controlled', () => {
         it('should return true if the player is defeated', () => {
             player.defeated = true;
-            player.userId = mongoose.Types.ObjectId();
+            player.userId = new mongoose.Types.ObjectId();
 
             const result = service.isAIControlled(game, player, false);
     

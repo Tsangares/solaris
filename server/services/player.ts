@@ -102,7 +102,7 @@ export default class PlayerService extends EventEmitter {
         let researchingNext: ResearchTypeNotRandom = 'terraforming';
 
         let player: Player = {
-            _id: mongoose.Types.ObjectId(),
+            _id: new mongoose.Types.ObjectId(),
             userId: null,
             homeStarId: null,
             alias: 'Empty Slot',

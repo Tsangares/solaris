@@ -1,9 +1,16 @@
-import { Pie, mixins } from 'vue-chartjs'
-const { reactiveProp } = mixins
+import { Pie } from 'vue-chartjs'
 
 export default {
-  extends: Pie,
-  mixins: [reactiveProp],
+    name: 'PieChart',
+    components: {Pie},
+    computed: {
+	chartData() {
+	    return /* mutable chart data */
+	},
+	chartOptions() {
+	    return /* mutable chart options */
+	}
+    },
   props: ['options'],
   mounted () {
     // eslint-disable-next-line

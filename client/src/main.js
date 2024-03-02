@@ -70,6 +70,7 @@ Vue.directive('tooltip', function(el, binding) {
   })
 })
 
+
 new Vue({
   router,
   store,

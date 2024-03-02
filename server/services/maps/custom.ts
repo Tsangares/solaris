@@ -101,7 +101,7 @@ export default class CustomMapService {
 
         // Populate actual IDs for all stars
         for (let loc of locations) {
-          loc._id = mongoose.Types.ObjectId();
+          loc._id = new mongoose.Types.ObjectId();
         }
 
         // Populate worm hole IDs of stars

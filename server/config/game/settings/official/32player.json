@@ -16,7 +16,7 @@
     "readyToQuit": "enabled"
   },
   "galaxy": {
-    "galaxyType": "irregular",
+    "galaxyType": "polar",
     "starsPerPlayer": 20,
     "productionTicks": 20
   },

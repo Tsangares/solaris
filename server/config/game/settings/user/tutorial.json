@@ -16,7 +16,7 @@
     "readyToQuit": "disabled"
   },
   "galaxy": {
-    "galaxyType": "circular",
+    "galaxyType": "polar",
     "starsPerPlayer": 3,
     "productionTicks": 24
   },

@@ -74,7 +74,7 @@ export default class StarService extends EventEmitter {
         };
 
         return {
-            _id: mongoose.Types.ObjectId(),
+            _id: new mongoose.Types.ObjectId(),
             name,
             location,
             naturalResources,

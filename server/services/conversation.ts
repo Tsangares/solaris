@@ -252,7 +252,7 @@ export default class ConversationService extends EventEmitter {
         }
 
         let newMessage: ConversationMessage = {
-            _id: mongoose.Types.ObjectId(),
+            _id: new mongoose.Types.ObjectId(),
             fromPlayerId: player._id,
             fromPlayerAlias: player.alias!,
             message,

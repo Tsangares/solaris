@@ -12,7 +12,7 @@ import ResourceService from '../resource';
 import StarService from '../star';
 import StarDistanceService from '../starDistance';
 
-export default class IrregularMapService {
+export default class PolarMapService {
 
     randomService: RandomService;
     starService: StarService;
@@ -283,6 +283,70 @@ export default class IrregularMapService {
 
     }
 
+    //Type of polar 
+    get_foil(stars:number = 30): Location[]{
+        //Equations lambda x: 1+ np.cos(x/2 + x/3)*np.sin(x/2 + x/3)
+        
+        //Domain is 0 to 2pi
+        const get_r = (theta) =>{
+            return 1 + Math.cos(5*theta/6)*Math.sin(5*theta/6);
+        }
+        let locations: Location[] = [];
+        let domain = 6*Math.PI;
+        //Loop through numbers between 0 and 2pi based on number of stars
+        for (let theta = 0; theta < domain; theta += domain/stars){
+            locations.push({
+                x: 1000*get_r(theta)*Math.cos(theta)-500,
+                y: 1000*get_r(theta)*Math.sin(theta)-500
+            } as Location);
+        }
+        return locations;
+
+    }
+    //Randomized function to return a gaussian point given mean mu and standard deviation std
+    _gaussian(mu,std){
+        let u = 0, v = 0;
+        while(u === 0) u = Math.random();
+        while(v === 0) v = Math.random();
+        let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        return z*std + mu;
+    }
+    //Gaussian for a 2D point centered at x,y
+    _gaussian_point(x,y,std){
+        return {x: this._gaussian(x,std), y: this._gaussian(y,std)};
+    }
+
+    get_gaussian_foil(players:number, stars:number, std:number = 100, avoid_locations:Location[] = []): Location[]{
+        const LIMIT_DIST = 50;
+        let centers = this.get_foil(players);
+        let locations: Location[] = [];
+        let count = Math.round(stars/players);
+        for (let center of centers){
+            for(let i = 0; i < count; i++){
+                let point = this._gaussian_point(center.x,center.y,std);
+                let min_dist = 0;
+                let dist = Infinity;
+                let local_std = std;
+
+                //Check if the point is too close to any other point
+                while (min_dist < LIMIT_DIST){
+                    for (let avoid of avoid_locations){
+                        dist = this.distanceService.getDistanceBetweenLocations(avoid,point);
+                        if (dist < LIMIT_DIST){
+                            min_dist = dist;
+                            point = this._gaussian_point(center.x,center.y,local_std);
+                            break;
+                        } else if (dist < dist) dist = dist;
+                    }
+                    local_std *= 1.01; //Stops infinite loop; grows gaussian variance every failure
+                }
+
+                locations.push(point);
+                avoid_locations.push(point);
+            }
+        }
+        return locations;
+    }
     generateLocations(game, starCount: number, resourceDistribution: GameResourceDistribution, playerCount: number): Location[] {
         if (this.gameTypeService.isKingOfTheHillMode(game)) {
             throw new ValidationError(`King of the hill is not supported in irregular maps.`);
@@ -311,12 +375,22 @@ export default class IrregularMapService {
         const PIVOT_DISTANCE = RING_COUNT*STAR_DISTANCE;
 
         let locations: Location[] = [];
-        let homeLocations = this._generateHomeLocations(PIVOT_DISTANCE, playerCount, RNG, SIMPLEX_NOISE, NOISE_SPREAD);
-        let supplementaryHomeLocations = this._generateSupplementaryHomeLocations(PIVOT_DISTANCE, homeLocations);
-        let baseLocations = [];
-        let supplementaryLocations = [];
-
-        
+        let homeLocations = this.get_foil(playerCount);
+        console.log("Polar Plottting");
+        locations.concat(homeLocations);
+        locations = this.get_gaussian_foil(playerCount*2,starCount/2,100,locations);
+        //locations.concat(locations)
+        locations = this.get_gaussian_foil(playerCount*4,starCount/2,50,locations);
+        for(let location of locations){
+            (location as any).homeStar = false;
+            (location as any).linkedLocations = [];
+        } 
+        for(let homeLocation of homeLocations) {
+            (homeLocation as any).homeStar = true;
+            (homeLocation as any).linkedLocations = [];
+        }
+        locations = locations.concat(homeLocations);
+        /*
         for( let homeLocation of homeLocations ) {
             this._generateConcentricHexRingsLocations( homeLocation, RING_COUNT, STAR_DISTANCE, baseLocations );
         }
@@ -326,88 +400,12 @@ export default class IrregularMapService {
 
         locations = locations.concat(baseLocations, supplementaryLocations);
 
-        this._pruneLocationsOutsideMetaball(locations, homeLocations, PIVOT_DISTANCE, RNG);
-        this._randomlyDislocateLocations(locations, STAR_DISLOCATION_THRESHOLD, RNG);
-        this._pruneLocationsWithNoise( locations, (starCount-playerCount), SIMPLEX_NOISE, NOISE_SPREAD );
-
-        
-        
-        //------------------------------------------------------------------------------------------
-
-        //TODO move the selecting star logic to its own function that is mapgen agnostic
-        //TODO move the pulling star logic --/--
-
         for(let homeLocation of homeLocations) {
             (homeLocation as any).homeStar = true;
             (homeLocation as any).linkedLocations = [];
         }
 
-
-        let unlinkedLocations = locations.filter( (loc) => { return true;} );
-        let startingStarsCount = STARTING_STAR_COUNT;
-
-        while(startingStarsCount--) {
-            for(let homeLocation of homeLocations) {
-                let closestUnlinkedLocation = this.distanceService.getClosestLocation(homeLocation, unlinkedLocations) as any;
-                (homeLocation as any).linkedLocations.push(closestUnlinkedLocation);
-                closestUnlinkedLocation.linked = true;
-                unlinkedLocations = unlinkedLocations.filter( (loc) => { return loc !== closestUnlinkedLocation; } );
-            }
-        }
-
-        // pull the closest stars that will be linked so they are in hyper range
-        let minimumClaimDistance = this.distanceService.getHyperspaceDistance(game, INITIAL_HYPER_RANGE)-2;//-2 to avoid floating point imprecisions
-
-        for(let homeLocation of homeLocations) {
-            let reachableLocations: Location[] = [];
-            let unreachebleLocations: Location[] = [];
-
-            reachableLocations.push(homeLocation);
-            
-            for(let location of (homeLocation as any).linkedLocations) {
-                unreachebleLocations.push(location);
-            }
-
-            while( unreachebleLocations.length > 0) {
-                //find the unreachable location that is closer to any of the reachable locations
-                for(let unreachebleLocation of unreachebleLocations) {
-                    let distanceToClosestReachable;
-                    let closestReachableLocation;
-                    let smallestDistance = Number.MAX_VALUE;
-                    
-                    for(let reachableLocation of reachableLocations) {
-                        let distance = this.distanceService.getDistanceBetweenLocations(unreachebleLocation, reachableLocation);
-                        
-                        if (distance < smallestDistance ) { 
-                            smallestDistance = distance;
-                            distanceToClosestReachable = distance;
-                            closestReachableLocation = reachableLocation;
-                        }
-                    }
-
-                    (unreachebleLocation as any).distanceToClosestReachable = distanceToClosestReachable;
-                    (unreachebleLocation as any).closestReachable = closestReachableLocation;
-                }
-
-                let closestUnreachable = unreachebleLocations[0];
-
-                for (let unreachebleLocation of unreachebleLocations) {
-                    if ((unreachebleLocation as any).distanceToClosestReachable < (closestUnreachable as any).distanceToClosestReachable) {
-                        closestUnreachable = unreachebleLocation;
-                    }
-                }
-
-                this._moveLocationTowards(closestUnreachable, (closestUnreachable as any).closestReachable, minimumClaimDistance);
-                
-                // after moving closer we can change the location from the unreachable to the reachable array
-                unreachebleLocations.splice(unreachebleLocations.indexOf(closestUnreachable), 1);
-                reachableLocations.push(closestUnreachable);
-            }
-
-            //now all linked stars should be reachable
-        }
-
-        locations = locations.concat(homeLocations);
+        */
 
         this.resourceService.distribute(game, locations, resourceDistribution);
         

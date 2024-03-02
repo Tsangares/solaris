@@ -5,7 +5,7 @@
        "type":"custom",
        "mode":"conquest",
        "password":null,
-       "playerLimit":8,
+       "playerLimit":40,
        "playerType":"establishedPlayers",
        "anonymity":"normal",
        "playerOnlineStatus":"hidden",
@@ -16,7 +16,7 @@
        "readyToQuit": "enabled"
     },
     "galaxy":{
-       "galaxyType":"irregular",
+       "galaxyType":"polar",
        "starsPerPlayer":20,
        "productionTicks":20
     },

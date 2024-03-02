@@ -325,7 +325,11 @@
        ]
     },
     "galaxy":{
-       "galaxyType":[
+       "galaxyType":[  
+         {
+             "value":"polar",
+             "text":"Polar"
+          },
           {
              "value":"circular",
              "text":"Circular"
